@@ -36,4 +36,30 @@ class ResetPasswordController extends Controller
     {
         $this->middleware('guest');
     }
+    /**
+     * Get the response for a successful password reset.
+     *
+     * @param  string  $response
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    protected function sendResetResponse($response)
+    {
+        if (! $this->guard()->user()->active){
+            $this->guard()->logout();
+
+            return redirect('/login')->withInfo('Your Password has been changed but you still need to activate');
+        }
+
+        return redirect($this->redirectPath())
+            ->with('status', trans($response));
+    }
+//    /**
+//     * Get the guard to be used during password reset.
+//     *
+//     * @return \Illuminate\Contracts\Auth\StatefulGuard
+//     */
+//    protected function guard()
+//    {
+//        return Auth::guard();
+//    }
 }
